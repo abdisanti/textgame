@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+</head>
+<body bgcolor="BLACK" TEXT="WHITE">
+
+<div id="main" style="display:none">
+<div id="game_text" style="font-size:50px"></div>
+<div id="game_img"><img src="imgs/takumi-chilling.gif"></div>
+<button id="but_cont" onclick="key_input('Continue');" style="font-size: 100px;">Continue</button> 
+<button id="but_a" onclick="key_input('A');" style="font-size: 100px;display:none">A</button>
+<button id="but_b" onclick="key_input('B');" style="font-size: 100px;display:none">B</button>
+</div>
+
+
+<div id="splash" style="font-size:100px"> Loading...<br>
+</id><img src="imgs/IDred.gif">
+</div>
+
+<div id="splash_imgonly"></div>
+
+<script>
+var game_data;
+var current_state;
+
+var stim = 0;
+var points = 0;
+
+
+setTimeout(function(){
+            $('#splash').hide();
+            $('#main').show();
+            }, 4000);
+
+
+$.getJSON( "game.json", function( data ) {
+        game_data = data;
+        current_state = data['start_state'];
+        $('#game_text').html( game_data['states'][ data['start_state'] ]['text'] ); 
+
+});
+
+function next_state( state) {
+    console.log("Current State = " + current_state + " --> New State= " + state) 
+    current_state = state
+    if (game_data['states'][ current_state ]['text'] != null){
+        $('#game_text').html( game_data['states'][ current_state ]['text'] );
+    } else {
+        console.log("no text");
+        if (game_data['states'][ current_state ]['stim_change'] != null){
+            console.log("+ stim " + game_data['states'][ current_state ]['stim_change'] ) 
+            stim = stim + game_data['states'][ current_state ]['stim_change']
+        }
+        if (game_data['states'][ current_state ]['point_change'] != null){
+            console.log("+ point " + game_data['states'][ current_state ]['stim_change'] ) 
+            points = points + game_data['states'][ current_state ]['point_change']
+        }
+        if (game_data['states'][ current_state ]['image_change'] != null){
+            $("#game_img").html( game_data['states'][ current_state ]['image_change'] );
+        }
+        if (game_data['states'][ current_state]['hide_but'] != null){
+            if(typeof(game_data['states'][ current_state]['hide_but']) == "object"){
+                for(i=0; i< game_data['states'][ current_state]['hide_but'].length; i++)
+                {
+                    $("#but_" + game_data['states'][ current_state][i]['hide_but']).hide();
+                }
+            }
+            else{
+                $("#but_" + game_data['states'][ current_state]['hide_but']).hide();
+            }
+        }
+        if (game_data['states'][ current_state]['show_but'] != null){
+            if(typeof(game_data['states'][ current_state]['show_but']) == "object"){
+                for(i=0; i< game_data['states'][ current_state]['show_but'].length; i++)
+                {
+                    $("#but_" + game_data['states'][ current_state]['show_but'][i]).show();
+                }
+            }
+            else{
+                $("#but_" + game_data['states'][ current_state]['show_but']).show();
+            }
+        }
+        if (game_data['states'][ current_state]['splash_change'] != null){
+            $("#splash_imgonly").html( game_data['states'][ current_state ]['splash_change'] );
+
+            $("#splash_imgonly").show();
+            $("#main").hide();
+
+            setTimeout(function(){
+                $('#splash_imgonly').hide();
+                $('#main').show();
+                }, 2000);
+        }
+        next_state( game_data['states'][ current_state ]['next_state']) 
+    }
+}
+
+
+function key_input(what_key){
+    for(i=0; i< game_data['states'][current_state]['next_state'].length; i++){
+        if( what_key == game_data['states'][current_state]['next_state'][i]['key_input']) {
+            next_state(game_data['states'][current_state]['next_state'][i]['state_name'])
+        } 
+    }
+
+    console.log(what_key);
+}
+</script>
+</body>
+</html>

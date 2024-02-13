@@ -1,0 +1,67 @@
+{
+    "start_state" : "start",
+
+    "states" : {
+        
+        "start": {
+            "text" : "You're cruising down the touge when suddenly...",
+            "next_state" : [ 
+                               {
+                                    "state_name" : "shingoappear_stim",
+                                    "key_input"  : "Continue"
+                                }
+                            ]
+        },
+        "shingoappear_stim": {
+            "next_state" : ["challenge_stim"],
+            "splash_change" : "<img src=\"imgs/headlightsapproach.gif\">"
+        },
+        "challenge_stim": {
+                        "next_state" : [ "challenge" ],
+                        "stim_change" : 10,
+                        "point_change" : 1 ,
+                        "image_change" : "<img src=\"imgs/shingoapproaches.jpg\">",
+                        "show_but" : ["a", "b"],
+                        "hide_but" : "cont"
+                        },
+        "challenge" : {
+            "text" : "Shingo in his red EG6 appears in your rearview, he wants to battle you in a race! <br> Do you accept the challenge? <br> A = yes <br> B = no",
+            "next_state" : [
+                                {
+                                    "state_name" : "accept_stim",
+                                    "key_input" : "A"
+                                },
+                                {
+                                    "state_name" : "deny_stim",
+                                    "key_input" : "B"
+                                }
+
+                            ]
+        },
+        "accept_stim": {
+            "next_state" : ["accept"],
+            "splash_change": "<img src=\"imgs/ae86-upshift.gif\">",
+            "image_change" : "<img src=\"imgs/tachometerae86.gif\">",
+            "stim_change" : 10
+        }, 
+        "deny_stim" : {
+            "next_state" : ["deny"],
+            "splash_change": "<img src=\"imgs/shingobump.gif\">",
+            "image_change" : "<img src=\"imgs/heeltoeandturn.gif\">",
+            "stim_change" : 10
+        },
+        "accept" : {
+            "next_state" : "exit",
+            "text" : "You shift down a gear, and hit the gas, the race is on!"
+        },    
+        "deny" : {
+            "next_state" : "exit",
+            "text" : "Shingo bumps you! Do you still want to deny his challenge?"
+        },
+        "kill" : {
+            "next_state" : "start",
+            "stim_change" : 1
+        }
+    }
+}
+
